@@ -3,14 +3,16 @@ module Kagome.DOM.Class where
 import Prelude
 
 import Data.Maybe (Maybe(..))
-
 import Web.DOM.CharacterData as CharacterData
 import Web.DOM.Document as Document
 import Web.DOM.Element as Element
 import Web.DOM.Node as Node
 import Web.DOM.Text as Text
 import Web.Event.EventTarget as EventTarget
+import Web.HTML.HTMLButtonElement as HTMLButtonElement
+import Web.HTML.HTMLDocument as HTMLDocument
 import Web.HTML.HTMLElement as HTMLElement
+import Web.HTML.HTMLInputElement as HTMLInputElement
 
 class Is base sub where
     toBase :: sub -> base
@@ -60,6 +62,31 @@ else instance instanceIsCharacterDataNode :: Is base Node.Node => Is base Charac
     toBase = toBase <<< CharacterData.toNode
     fromBase = CharacterData.fromNode <=< fromBase
 
+instance instanceIsHTMLDocument :: Is HTMLDocument.HTMLDocument HTMLDocument.HTMLDocument where
+    toBase = identity
+    fromBase = Just
+else instance instanceIsHTMLDocumentDocument :: Is base Document.Document => Is base HTMLDocument.HTMLDocument where
+    toBase = toBase <<< HTMLDocument.toDocument
+    fromBase = HTMLDocument.fromDocument <=< fromBase
+
+instance instanceIsHTMLButtonElement :: Is HTMLButtonElement.HTMLButtonElement HTMLButtonElement.HTMLButtonElement where
+    toBase = identity
+    fromBase = Just
+else instance instanceIsHTMLButtonElementHTMLElement :: Is base HTMLElement.HTMLElement => Is base HTMLButtonElement.HTMLButtonElement where
+    toBase = toBase <<< HTMLButtonElement.toHTMLElement
+    fromBase = HTMLButtonElement.fromHTMLElement <=< fromBase
+
+instance instanceIsHTMLInputElement :: Is HTMLInputElement.HTMLInputElement HTMLInputElement.HTMLInputElement where
+    toBase = identity
+    fromBase = Just
+else instance instanceIsHTMLInputElementHTMLElement :: Is base HTMLElement.HTMLElement => Is base HTMLInputElement.HTMLInputElement where
+    toBase = toBase <<< HTMLInputElement.toHTMLElement
+    fromBase = HTMLInputElement.fromHTMLElement <=< fromBase
+
+instance instanceIsEventTarget :: Is EventTarget.EventTarget EventTarget.EventTarget where
+    toBase = identity
+    fromBase = Just
+
 toNode :: forall sub. Is Node.Node sub => sub -> Node.Node
 toNode = toBase
 
@@ -83,3 +110,15 @@ toCharacterData = toBase
 
 fromCharacterData :: forall sub. Is CharacterData.CharacterData sub => CharacterData.CharacterData -> Maybe sub
 fromCharacterData = fromBase
+
+toDocument :: forall sub. Is Document.Document sub => sub -> Document.Document
+toDocument = toBase
+
+fromDocument :: forall sub. Is Document.Document sub => Document.Document -> Maybe sub
+fromDocument = fromBase
+
+toHTMLElement :: forall sub. Is HTMLElement.HTMLElement sub => sub -> HTMLElement.HTMLElement
+toHTMLElement = toBase
+
+fromHTMLElement :: forall sub. Is HTMLElement.HTMLElement sub => HTMLElement.HTMLElement -> Maybe sub
+fromHTMLElement = fromBase

@@ -7,6 +7,7 @@
     , "web-dom"
     , "web-events"
     , "dom-indexed"
+    , "debug"
     ]
 , packages = ./packages.dhall
 , sources = [ "src/**/*.purs", "test/**/*.purs" ]

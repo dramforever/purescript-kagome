@@ -2,8 +2,9 @@ module Kagome.Process.Disposal where
 
 import Prelude
 
-import Kagome.Types.Process (Process(..), mapResultDisposal)
+import Effect.Class.Console (log)
 import Kagome.Types.Disposal (class Disposable, Disposal, dispose)
+import Kagome.Types.Process (Process(..), mapResultDisposal)
 
 -- | `registerDisposal d`: Register the `Disposal` `d` to be called when
 -- | backtracking.

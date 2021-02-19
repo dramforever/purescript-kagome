@@ -26,7 +26,14 @@ function generateConversions(start) {
 else instance instanceIs${sub}${base} :: Is base ${base}.${base} => Is base ${sub}.${sub} where
     toBase = toBase <<< ${sub}.to${base}
     fromBase = ${sub}.from${base} <=< fromBase`);
+    }
 
+    for (const base of new Set(known.values())) {
+        if (known.has(base)) continue;
+
+        text.push(`instance instanceIs${base} :: Is ${base}.${base} ${base}.${base} where
+    toBase = identity
+    fromBase = Just`);
     }
 
     for (const base of new Set(known.values())) {
@@ -40,4 +47,4 @@ from${base} = fromBase`)
     return text;
 }
 
-console.log(generateConversions([Document, HTMLElement, Text]).join('\n\n'));
+console.log(generateConversions([Document, HTMLElement, Text, HTMLDocument, HTMLButtonElement, HTMLInputElement]).join('\n\n'));

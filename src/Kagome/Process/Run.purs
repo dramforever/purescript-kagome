@@ -7,24 +7,29 @@ import Effect (Effect)
 import Effect.Class (liftEffect)
 import Effect.Exception (throw)
 import Effect.Ref as Ref
-import FRP.Event as Event
+import Kagome.Process.Disposal (registerDisposal)
 import Kagome.Types.Disposal (Disposal)
+import Kagome.Types.Event as Event
 import Kagome.Types.Process (Process(..), Result(..), unwrapProcess)
 import Kagome.Types.Watch (Sentinel(..))
 
 process :: forall a. Process a -> Process (Sentinel a)
 process (Process p) = do
     current <- liftEffect $ Ref.new Nothing
-    { event, push } <- liftEffect $ Event.create
+    { event, push, clear } <- liftEffect $ Event.createDisposable
+
+    registerDisposal clear
 
     Result d r <- liftEffect $ p \v -> do
-            shouldPush <- isJust <$> Ref.read current
-            when shouldPush (push v)
-            Ref.write (Just v) current
-            pure (pure v)
+        shouldPush <- isJust <$> Ref.read current
+        when shouldPush (push v)
+        Ref.write (Just v) current
+        pure (pure v)
+
+    registerDisposal d
 
     pure $ Sentinel
-        { currentValue: do
+        { current: do
             val <- Ref.read current
             case val of
                 Just v -> pure v
